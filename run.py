@@ -1,6 +1,7 @@
 import os
 
 import requests
+from bs4 import BeautifulSoup
 from requests.auth import HTTPBasicAuth
 from jinja2 import Template
 
@@ -10,6 +11,7 @@ auth = HTTPBasicAuth(username, password)
 
 REPO_STATS_URL_FORMAT = "https://api.github.com/repos/{owner}/{repo}/stats/contributors"
 WATCHING_URL_FORMAT = "https://api.github.com/users/{user}/subscriptions"
+REPO_URL_FORMAT = "https://github.com/{owner}/{repo}"
 
 def get_repos_info():
     repos = [get_repo_info(owner, repo) for owner, repo in get_repos()]
@@ -27,7 +29,16 @@ def get_repo_info(owner, repo):
         'repo': repo,
         'authors': authors,
         'url': 'https://github.com/{owner}/{repo}'.format(owner=owner, repo=repo),
-        'total_commits': sum(a['commits'] for a in authors)}
+        'total_commits': get_total_commits(owner, repo)}
+
+def get_total_commits(owner, repo):
+    url = REPO_URL_FORMAT.format(owner=owner, repo=repo)
+    resp = requests.get(url)
+    bs = BeautifulSoup(resp.content)
+    result = bs.select(".commits .num")
+    if not result:
+        return 0
+    return int(result[0].text.strip())
 
 def get_authors_info(owner, repo):
     url = REPO_STATS_URL_FORMAT.format(owner=owner, repo=repo)
