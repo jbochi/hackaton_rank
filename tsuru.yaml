@@ -1,0 +1,4 @@
+hooks:
+  build:
+    - ./setup-virtualenv.sh
+    - /home/application/.top/bin/python run.py

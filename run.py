@@ -1,12 +1,12 @@
+import os
+
 import requests
 from requests.auth import HTTPBasicAuth
 from jinja2 import Template
-import yaml
 
-yaml_file = open('config.yaml')
-credentials = yaml.load(yaml_file)['credentials']
-
-auth = HTTPBasicAuth(credentials['user'], credentials['password'])
+username = os.environ.get("GITHUB_USERNAME", "hackinpoawatcher")
+password = os.environ.get("GITHUB_PASSWORD", "PASSWORD")
+auth = HTTPBasicAuth(username, password)
 
 REPO_STATS_URL_FORMAT = "https://api.github.com/repos/{owner}/{repo}/stats/contributors"
 WATCHING_URL_FORMAT = "https://api.github.com/users/{user}/subscriptions"
@@ -16,7 +16,7 @@ def get_repos_info():
     return sorted(repos, key=lambda r: -r['total_commits'])
 
 def get_repos():
-    url = WATCHING_URL_FORMAT.format(user=credentials['user'])
+    url = WATCHING_URL_FORMAT.format(user=username)
     data = requests.get(url, auth=auth, params={'per_page': '100'}).json()
     return [r['full_name'].split("/") for r in data]
 
