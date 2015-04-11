@@ -21,28 +21,46 @@ def get_repos_info():
 
 def get_repos():
     url = WATCHING_URL_FORMAT.format(user=username)
-    data = requests.get(url, auth=auth, params={'per_page': '100'}).json()
+    data = requests.get(url, auth=auth, params={'per_page': '5'}).json()
     return [r['full_name'].split("/") for r in data]
 
 
 def get_repo_info(owner, repo):
     authors = get_authors_info(owner, repo)
-    return {
+    data = {
         'owner': owner,
         'repo': repo,
         'authors': authors,
         'url': 'https://github.com/{owner}/{repo}'.format(owner=owner, repo=repo),
-        'total_commits': get_total_commits(owner, repo)}
+    }
+    data.update(get_page_data(owner, repo))
+    return data
 
 
-def get_total_commits(owner, repo):
+def get_page_data(owner, repo):
     url = REPO_URL_FORMAT.format(owner=owner, repo=repo)
     resp = requests.get(url)
-    bs = BeautifulSoup(resp.content)
-    result = bs.select(".commits .num")
+    soup = BeautifulSoup(resp.content)
+    return {
+        'total_commits': get_total_commits(soup),
+        'last_commit': get_last_commit(soup)
+    }
+
+def get_total_commits(soup):
+    result = soup.select(".commits .num")
     if not result:
         return 0
     return int(result[0].text.strip())
+
+
+def get_last_commit(soup):
+    result = soup.select(".commit-title")
+    if not result:
+        return 0
+    text = result[0].text.strip()
+    if text.startswith('Fetching latest commit'):
+        return ""
+    return text
 
 
 def get_authors_info(owner, repo):
