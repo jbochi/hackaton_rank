@@ -1,14 +1,21 @@
 <html>
     <head>
         <link rel="stylesheet" href="http://code.divshot.com/bootstrap-theme-white-plum/dist/css/bootstrap.css">
+        <meta charset="UTF-8">
+        <style>
+            .table tbody > tr > td { line-height: 40px; }
+            .authors { text-align: right; }
+            img { border-radius: 100%; }
+        </style>
     </head>
     <body>
-        <h1>Top projetos do hackinpoa</h1>
+        <h1>Top projetos do <strong>#HackInPOA</strong> no Github</h1>
         <table class="table table-hover">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Repositório</th>
+                    <th></th>
                     <th>Commits</th>
                 </tr>
             </thead>
@@ -20,11 +27,21 @@
                             <a href="{{ repo.url }}">
                                 {{ repo.owner }}/{{ repo.repo }}
                             </a>
-                            </td>
+                        </td>
+                        <td class="authors">
+                            {% for author in repo.authors %}
+                                <a href="http://github.com/{{ author.name }}" target="_blank">
+                                    <img src="{{ author.avatar }}" width="40" height="40"/>
+                                </a>
+                            {% endfor %}
+                        </td>
                         <td>{{ repo.total_commits }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <p>
+            Código disponível "de grátis" no <a href="https://github.com/jbochi/hackaton_rank">Github</a>!
+        </p>
     </body>
 </html>

@@ -1,5 +1,4 @@
 import requests
-import pprint
 from requests.auth import HTTPBasicAuth
 from jinja2 import Template
 import yaml
@@ -18,7 +17,7 @@ def get_repos_info():
 
 def get_repos():
     url = WATCHING_URL_FORMAT.format(user=credentials['user'])
-    data = requests.get(url, auth=auth).json()
+    data = requests.get(url, auth=auth, params={'per_page': '100'}).json()
     return [r['full_name'].split("/") for r in data]
 
 def get_repo_info(owner, repo):
@@ -37,7 +36,7 @@ def get_authors_info(owner, repo):
     if authors_request.status_code == 204:
         return []
     authors = authors_request.json()
-    author_infos = [author_info(author) for author in authors]
+    author_infos = [author_info(author) for author in authors if author['author']]
     return sorted(author_infos, key= lambda a: -a['commits'])
 
 def author_info(author):
