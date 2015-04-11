@@ -3,9 +3,34 @@
         <link rel="stylesheet" href="http://code.divshot.com/bootstrap-theme-white-plum/dist/css/bootstrap.css">
         <meta charset="UTF-8">
         <style>
-            .table tbody > tr > td { line-height: 40px; }
-            .authors { text-align: right; }
-            img { border-radius: 100%; }
+          td {
+            white-space: nowrap;
+          }
+
+          td.description {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 1px;
+            width: 100%;
+          }
+
+         td.description i {
+           font-size: 12px;
+           color: #999;
+           margin-left: 15px;
+         }
+
+          .table tbody > tr > td {
+            line-height: 40px;
+          }
+
+          .authors {
+            text-align: right;
+          }
+
+          img {
+            border-radius: 100%;
+          }
         </style>
     </head>
     <body>
@@ -23,7 +48,7 @@
                 {% for repo in repos %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td>
+                        <td class="description">
                             <a href="{{ repo.url }}">
                                 {{ repo.owner }}/{{ repo.repo }}
                             </a>
