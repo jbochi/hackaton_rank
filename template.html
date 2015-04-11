@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="http://code.divshot.com/bootstrap-theme-white-plum/dist/css/bootstrap.css">
+    </head>
+    <body>
+        <h1>Top projetos do hackinpoa</h1>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Repositório</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for repo in repos %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <a href="{{ repo.url }}">
+                                {{ repo.owner }}/{{ repo.repo }}
+                            </a>
+                            </td>
+                        <td>{{ repo.total_commits }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
