@@ -56,7 +56,7 @@ def get_total_commits(soup):
 def get_last_commit(soup):
     result = soup.select(".commit-title")
     if not result:
-        return 0
+        return ""
     text = result[0].text.strip()
     if text.startswith('Fetching latest commit'):
         return ""
