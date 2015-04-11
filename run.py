@@ -1,5 +1,5 @@
 import os
-
+import time
 import requests
 from bs4 import BeautifulSoup
 from requests.auth import HTTPBasicAuth
@@ -13,14 +13,17 @@ REPO_STATS_URL_FORMAT = "https://api.github.com/repos/{owner}/{repo}/stats/contr
 WATCHING_URL_FORMAT = "https://api.github.com/users/{user}/subscriptions"
 REPO_URL_FORMAT = "https://github.com/{owner}/{repo}"
 
+
 def get_repos_info():
     repos = [get_repo_info(owner, repo) for owner, repo in get_repos()]
     return sorted(repos, key=lambda r: -r['total_commits'])
+
 
 def get_repos():
     url = WATCHING_URL_FORMAT.format(user=username)
     data = requests.get(url, auth=auth, params={'per_page': '100'}).json()
     return [r['full_name'].split("/") for r in data]
+
 
 def get_repo_info(owner, repo):
     authors = get_authors_info(owner, repo)
@@ -31,6 +34,7 @@ def get_repo_info(owner, repo):
         'url': 'https://github.com/{owner}/{repo}'.format(owner=owner, repo=repo),
         'total_commits': get_total_commits(owner, repo)}
 
+
 def get_total_commits(owner, repo):
     url = REPO_URL_FORMAT.format(owner=owner, repo=repo)
     resp = requests.get(url)
@@ -40,15 +44,22 @@ def get_total_commits(owner, repo):
         return 0
     return int(result[0].text.strip())
 
+
 def get_authors_info(owner, repo):
     url = REPO_STATS_URL_FORMAT.format(owner=owner, repo=repo)
     print url
-    authors_request = requests.get(url, auth=auth)
+    for tries in range(5):
+        authors_request = requests.get(url, auth=auth)
+        if authors_request.status_code == 200:
+            break
+        print 'Request failed. Sleeping...'
+        time.sleep(5)
     if authors_request.status_code == 204:
         return []
     authors = authors_request.json()
     author_infos = [author_info(author) for author in authors if author['author']]
     return sorted(author_infos, key= lambda a: -a['commits'])
+
 
 def author_info(author):
     name = author['author']['login']
@@ -61,6 +72,7 @@ def render(repos):
     template_content = open('template.html').read().decode('utf-8')
     template = Template(template_content)
     return template.render(repos=repos)
+
 
 if __name__ == '__main__':
     repos = get_repos_info()
