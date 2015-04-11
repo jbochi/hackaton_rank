@@ -21,7 +21,7 @@ def get_repos_info():
 
 def get_repos():
     url = WATCHING_URL_FORMAT.format(user=username)
-    data = requests.get(url, auth=auth, params={'per_page': '5'}).json()
+    data = requests.get(url, auth=auth, params={'per_page': '100'}).json()
     return [r['full_name'].split("/") for r in data]
 
 
