@@ -66,8 +66,8 @@
                                         {{ repo.owner }}/{{ repo.repo }}
                                     </a>
                                     <span class="languages">
-                                    {% for lang, lines in repo.languages.items() %}
-                                        <span class="label label-default language {{ lang|lower }}-color">{{ lang|lower }}</span>
+                                    {% for lang in repo.languages %}
+                                        <span class="label label-default language {{ lang.name|lower }}-color">{{ lang.name|lower }}</span>
                                     {% endfor %}
                                     </span>
                                     <i>

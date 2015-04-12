@@ -2,8 +2,10 @@ import os
 import time
 import requests
 from bs4 import BeautifulSoup
+from collections import namedtuple
 from requests.auth import HTTPBasicAuth
 from jinja2 import Template
+
 
 username = os.environ.get("GITHUB_USERNAME", "hackinpoawatcher")
 password = os.environ.get("GITHUB_PASSWORD", "PASSWORD")
@@ -14,6 +16,7 @@ WATCHING_URL_FORMAT = "https://api.github.com/users/{user}/subscriptions"
 REPO_URL_FORMAT = "https://github.com/{owner}/{repo}"
 LANG_URL_FORMAT = "https://api.github.com/repos/{owner}/{repo}/languages"
 
+Language = namedtuple('Language', ['name', 'lines'], verbose=True)
 
 def get_repos_info():
     repos = [get_repo_info(owner, repo) for owner, repo in get_repos()]
@@ -72,8 +75,9 @@ def get_lang_info(owner, repo):
     languages_request = requests.get(url, auth=auth)
     if languages_request.status_code == 204:
         return []
-    print languages_request.json()
-    return languages_request.json()
+    data = languages_request.json()
+    langs = [Language(name, lines) for name, lines in data.items()]
+    return sorted(langs, key=lambda l: -l.lines)
 
 
 def get_authors_info(owner, repo):
