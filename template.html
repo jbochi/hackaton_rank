@@ -1,8 +1,9 @@
 <html>
     <head>
+        <link rel="stylesheet" href="http://code.divshot.com/bootstrap-theme-white-plum/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="https://gist.githubusercontent.com/cassioscabral/661b048a320c72ebfef7/raw/d07fba83ffdf89daed4b6efc5a6303ce6716e785/programming_languages.css">
         <meta charset="UTF-8">
         <title>Hack in PoA 2015 - Projetos</title>
-        <link rel="stylesheet" href="http://code.divshot.com/bootstrap-theme-white-plum/dist/css/bootstrap.css">
         <style>
           td {
             white-space: nowrap;
@@ -29,48 +30,67 @@
             text-align: right;
           }
 
+          .languages {
+            margin-left: 10px;
+          }
+
+          .commits {
+            text-align: right;
+          }
+
           img {
             border-radius: 100%;
           }
         </style>
     </head>
     <body>
-        <h1>Top projetos do <strong>#HackInPOA</strong> no GitHub</h1>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Repositório</th>
-                    <th></th>
-                    <th>Commits</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for repo in repos %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td class="description">
-                            <a href="{{ repo.url }}">
-                                {{ repo.owner }}/{{ repo.repo }}
-                            </a>
-                            <i>
-                                {{ repo.last_commit }}
-                            </i>
-                        </td>
-                        <td class="authors">
-                            {% for author in repo.authors %}
-                                <a href="http://github.com/{{ author.name }}" target="_blank">
-                                    <img src="{{ author.avatar }}" width="40" height="40"/>
-                                </a>
-                            {% endfor %}
-                        </td>
-                        <td>{{ repo.total_commits }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="container">
+        <h1>Top projetos do <strong>#HackInPOA</strong> no Github</h1>
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Repositório</th>
+                            <th></th>
+                            <th class="commits">Commits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for repo in repos %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td class="description">
+                                    <a href="{{ repo.url }}">
+                                        {{ repo.owner }}/{{ repo.repo }}
+                                    </a>
+                                    <span class="languages">
+                                    {% for lang, lines in repo.languages.items() %}
+                                        <span class="label label-default language {{ lang|lower }}-color">{{ lang|lower }}</span>
+                                    {% endfor %}
+                                    </span>
+                                    <i>
+                                        {{ repo.last_commit }}
+                                    </i>
+                                </td>
+                                <td class="authors">
+                                    {% for author in repo.authors %}
+                                        <a href="http://github.com/{{ author.name }}" target="_blank">
+                                            <img src="{{ author.avatar }}" alt="{{ author.name }}" width="40" height="40"/>
+                                        </a>
+                                    {% endfor %}
+                                </td>
+                                <td class="commits">{{ repo.total_commits }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <p>
             Código disponível "de grátis" no <a href="https://github.com/jbochi/hackaton_rank">GitHub</a>!
         </p>
+        </div>
     </body>
 </html>
